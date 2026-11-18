@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f3c653">
+    <title>മലയാളം നാഴിക വാച്ച് & കാൽക്കുലേറ്റർ</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="icon.svg">
+    <link rel="apple-touch-icon" href="icon-512.png">
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: #111827;
+            --accent-color: #f3c653;
+            --text-color: #f9fafb;
+            --muted-text: #9ca3af;
+            --border-color: #2d3748;
+            --input-bg: #182032;
+        }
+        * { box-sizing: border-box; }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Manjari', 'Meera Malayalam', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 16px 12px 32px 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .main-wrapper {
+            width: 100%;
+            max-width: 520px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        header {
+            text-align: center;
+            padding: 6px 4px;
+        }
+        h1 {
+            color: var(--accent-color);
+            font-size: 1.55rem;
+            line-height: 1.3;
+            margin: 0 0 6px 0;
+        }
+        .subtitle {
+            font-size: 0.9rem;
+            color: #d1d5db;
+            margin-bottom: 10px;
+        }
+        .designer-pill {
+            display: inline-block;
+            color: var(--accent-color);
+            font-size: 0.9rem;
+            padding: 6px 16px;
+            border: 1px solid rgba(243, 198, 83, 0.55);
+            border-radius: 999px;
+            background: rgba(243, 198, 83, 0.08);
+            font-weight: bold;
+        }
+        .card {
+            background-color: var(--card-bg);
+            border: 1.5px solid rgba(243, 198, 83, 0.65);
+            border-radius: 16px;
+            padding: 18px 16px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+        }
+        .section-title {
+            color: var(--accent-color);
+            font-size: 1.12rem;
+            font-weight: bold;
+            margin: 0 0 14px 0;
+            text-align: center;
+        }
+        .section-title-left {
+            color: var(--accent-color);
+            font-size: 1.12rem;
+            font-weight: bold;
+            margin: 0 0 14px 0;
+            text-align: left;
+            line-height: 1.35;
+        }
+        .clock-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        canvas {
+            max-width: 100%;
+            height: auto;
+        }
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            font-size: 0.8rem;
+            margin-top: 10px;
+            color: #d1d5db;
+        }
+        .legend span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .readout-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            width: 100%;
+            margin-top: 14px;
+        }
+        .readout-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 10px 8px;
+            text-align: center;
+        }
+        .readout-label {
+            font-size: 0.8rem;
+            color: var(--muted-text);
+            margin-bottom: 4px;
+        }
+        .readout-value {
+            font-size: 1.05rem;
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+        .readout-value.white {
+            color: var(--text-color);
+        }
+        .date-banner {
+            width: 100%;
+            margin-top: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 9px 10px;
+            text-align: center;
+            font-size: 0.88rem;
+            color: #e5e7eb;
+        }
+        /* Toggle Switcher Clock */
+        .toggle-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            margin-top: 14px;
+        }
+        .toggle-status {
+            color: var(--accent-color);
+            font-weight: bold;
+            font-size: 0.98rem;
+        }
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.92rem;
+            font-weight: bold;
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 56px;
+            height: 28px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #283244;
+            transition: .3s;
+            border-radius: 34px;
+            border: 1.5px solid var(--accent-color);
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 2.5px;
+            background-color: var(--accent-color);
+            transition: .3s;
+            border-radius: 50%;
+        }
+        input:checked + .slider:before { transform: translateX(27px); }
+        .hint-text {
+            font-size: 0.8rem;
+            color: var(--muted-text);
+        }
+        /* Calculator 1 */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 16px;
+            margin-bottom: 12px;
+        }
+        .field-col {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .field-col label {
+            font-size: 0.82rem;
+            color: #d1d5db;
+            min-height: 2.2em;
+            display: flex;
+            align-items: flex-end;
+        }
+        input[type="number"], input[type="time"] {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1.5px solid var(--border-color);
+            color: var(--text-color);
+            padding: 11px 8px;
+            border-radius: 10px;
+            font-size: 1.05rem;
+            text-align: center;
+            outline: none;
+        }
+        input[type="number"]:focus, input[type="time"]:focus {
+            border-color: var(--accent-color);
+        }
+        input[type="time"] {
+            text-align: left;
+            padding: 11px 14px;
+            font-size: 1.05rem;
+            color-scheme: dark;
+        }
+        .result-banner {
+            background: rgba(243, 198, 83, 0.08);
+            border: 1.5px solid rgba(243, 198, 83, 0.55);
+            border-radius: 12px;
+            padding: 12px 10px;
+            text-align: center;
+            color: var(--accent-color);
+            font-weight: bold;
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+        .sub-desc {
+            font-size: 0.86rem;
+            color: #d1d5db;
+            margin: -6px 0 12px 0;
+        }
+        footer.credit-card {
+            text-align: center;
+            background: var(--card-bg);
+            border: 1px solid rgba(243, 198, 83, 0.45);
+            border-radius: 14px;
+            padding: 14px;
+        }
+        footer.credit-card .small-label {
+            font-size: 0.8rem;
+            color: var(--muted-text);
+            margin-bottom: 4px;
+        }
+        footer.credit-card .author-name {
+            font-size: 1.05rem;
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="main-wrapper">
+        <!-- Header -->
+        <header>
+            <h1>മലയാളം നാഴിക വാച്ച് & കാൽക്കുലേറ്റർ</h1>
+            <div class="subtitle">൬൦ നാഴിക · ൩൬൦൦ വിനാഴിക · പരമ്പരാഗത സമയക്രമം</div>
+            <div class="designer-pill">രൂപകൽപ്പന: കണ്ണൂർ ചെറുത് • VISHNUPRASAD A S</div>
+        </header>
+
+        <!-- Section 1: Dual Dial Clock -->
+        <section class="card clock-area">
+            <h2 class="section-title">ഡ്യുവൽ ഡയൽ ക്ലോക്ക് (Dual Dial Clock)</h2>
+            <canvas id="dualCanvas" width="320" height="320"></canvas>
+            <div class="legend">
+                <span><i class="dot" style="background:#f3c653;"></i> മണിക്കൂർ & മിനിറ്റ്</span>
+                <span><i class="dot" style="background:#ef4444;"></i> നാഴിക</span>
+                <span><i class="dot" style="background:#38bdf8;"></i> വിനാഴിക</span>
+            </div>
+            <div class="readout-grid">
+                <div class="readout-box">
+                    <div class="readout-label">നാഴിക സമയം</div>
+                    <div class="readout-value" id="nazhikaReadout">൨൬ നാഴിക · ൧൦ വിനാഴിക</div>
+                </div>
+                <div class="readout-box">
+                    <div class="readout-label">ആധുനിക സമയം</div>
+                    <div class="readout-value white" id="modernReadout">12:00:00 PM</div>
+                </div>
+            </div>
+            <div class="date-banner" id="dateBanner">2026 നവംബർ 18, ബുധനാഴ്ച · 18 Nov 2026</div>
+        </section>
+
+        <!-- Section 2: Toggle / Mode Switcher Clock -->
+        <section class="card clock-area">
+            <h2 class="section-title">ടോഗിൾ / മോഡ് സ്വിച്ചർ ക്ലോക്ക്</h2>
+            <canvas id="toggleCanvas" width="230" height="230"></canvas>
+            <div class="toggle-controls">
+                <div class="toggle-status" id="toggleStatusText">സാധാരണ സമയം</div>
+                <div class="toggle-row">
+                    <span id="lblModern" style="color: var(--accent-color);">സാധാരണ</span>
+                    <label class="switch">
+                        <input type="checkbox" id="modeToggle" onchange="onModeChange()">
+                        <span class="slider"></span>
+                    </label>
+                    <span id="lblNazhika" style="color: var(--muted-text);">നാഴിക</span>
+                </div>
+                <div class="hint-text">മോഡ് മാറ്റാൻ ഇവിടെ ക്ലിക്ക് ചെയ്യുക</div>
+            </div>
+        </section>
+
+        <!-- Section 3: Duration Converter (Hours/Min/Sec <-> Nazhika/Vinazhika) -->
+        <section class="card">
+            <h2 class="section-title-left">1. സമയ ദൈർഘ്യം മാറ്റാൻ<br>(മണിക്കൂർ ⇄ നാഴിക)</h2>
+            
+            <div class="grid-3">
+                <div class="field-col">
+                    <label for="inHours">മണിക്കൂർ (Hours)</label>
+                    <input type="number" id="inHours" value="1" min="0" step="any" oninput="calcModernToNazhika()">
+                </div>
+                <div class="field-col">
+                    <label for="inMinutes">മിനിറ്റ് (Minutes)</label>
+                    <input type="number" id="inMinutes" value="0" min="0" step="any" oninput="calcModernToNazhika()">
+                </div>
+                <div class="field-col">
+                    <label for="inSeconds">സെക്കൻഡ് (Sec)</label>
+                    <input type="number" id="inSeconds" value="0" min="0" step="any" oninput="calcModernToNazhika()">
+                </div>
+            </div>
+            <div class="result-banner" id="resModernToNazhika">
+                2 നാഴിക 30 വിനാഴിക (൨ നാഴിക ൩൦ വിനാഴിക)
+            </div>
+
+            <div class="grid-2">
+                <div class="field-col">
+                    <label for="inNazhika">നാഴിക (Nazhika)</label>
+                    <input type="number" id="inNazhika" value="5" min="0" step="any" oninput="calcNazhikaToModern()">
+                </div>
+                <div class="field-col">
+                    <label for="inVinazhika">വിനാഴിക (Vinazhika)</label>
+                    <input type="number" id="inVinazhika" value="0" min="0" step="any" oninput="calcNazhikaToModern()">
+                </div>
+            </div>
+            <div class="result-banner" id="resNazhikaToModern">
+                2 മണിക്കൂർ 0 മിനിറ്റ് 0 സെക്കൻഡ്
+            </div>
+        </section>
+
+        <!-- Section 4: Clock Time to Nazhika Time -->
+        <section class="card">
+            <h2 class="section-title-left">2. ക്ലോക്ക് സമയം നാഴികയാക്കാൻ</h2>
+            <p class="sub-desc">സമയം തിരഞ്ഞെടുക്കുക (രാവിലെ 6:00 മുതൽ കണക്കാക്കുന്നു)</p>
+            <div style="margin-bottom: 12px;">
+                <input type="time" id="clockPicker" value="12:00:00" step="1" onchange="calcClockTimeToNazhika()" oninput="calcClockTimeToNazhika()">
+            </div>
+            <div class="result-banner" id="resClockToNazhika">
+                15 നാഴിക 0 വിനാഴിക (൧൫ നാഴിക ൦ വിനാഴിക)
+            </div>
+        </section>
+
+        <!-- Footer Credit -->
+        <footer class="credit-card">
+            <div class="small-label">രൂപകല്പന & വികസനം</div>
+            <div class="author-name">കണ്ണൂർ ചെറുത് · Vishnuprasad A S</div>
+        </footer>
+    </div>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch(() => {});
+            });
+        }
+
+        const mlDigits = ['൦', '൧', '൨', '൩', '൪', '൫', '൬', '൭', '൮', '൯'];
+        function toMlNum(num) {
+            return String(num).split('').map(c => mlDigits[c] !== undefined ? mlDigits[c] : c).join('');
+        }
+
+        function getNazhikaFromDate(dateObj) {
+            const sunrise = new Date(dateObj);
+            sunrise.setHours(6, 0, 0, 0);
+            let diffSec = (dateObj - sunrise) / 1000;
+            if (diffSec < 0) diffSec += 86400;
+            const totalVinazhika = diffSec / 24;
+            const nazhika = Math.floor(totalVinazhika / 60);
+            const vinazhika = Math.floor(totalVinazhika % 60);
+            const subVinazhika = totalVinazhika % 1;
+            return { nazhika, vinazhika, subVinazhika };
+        }
+
+        function drawHand(ctx, cx, cy, angleRad, length, width, color) {
+            ctx.save();
+            ctx.beginPath();
+            ctx.lineWidth = width;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = color;
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(
+                cx + Math.cos(angleRad - Math.PI / 2) * length,
+                cy + Math.sin(angleRad - Math.PI / 2) * length
+            );
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        function drawDualClock(now, nData) {
+            const canvas = document.getElementById('dualCanvas');
+            const ctx = canvas.getContext('2d');
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+            const rOuter = 148;
+            const rInner = 92;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Outer ring
+            ctx.beginPath();
+            ctx.arc(cx, cy, rOuter, 0, Math.PI * 2);
+            ctx.fillStyle = '#070b14';
+            ctx.fill();
+            ctx.lineWidth = 4;
+            ctx.strokeStyle = '#f3c653';
+            ctx.stroke();
+
+            // Inner Nazhika ring
+            ctx.beginPath();
+            ctx.arc(cx, cy, rInner, 0, Math.PI * 2);
+            ctx.lineWidth = 1.5;
+            ctx.strokeStyle = 'rgba(243, 198, 83, 0.55)';
+            ctx.stroke();
+
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            // Outer ticks & 1-12
+            for (let i = 0; i < 60; i++) {
+                const ang = (i * Math.PI) / 30 - Math.PI / 2;
+                const isHour = i % 5 === 0;
+                const tickStart = isHour ? rOuter - 12 : rOuter - 6;
+                ctx.beginPath();
+                ctx.moveTo(cx + Math.cos(ang) * tickStart, cy + Math.sin(ang) * tickStart);
+                ctx.lineTo(cx + Math.cos(ang) * (rOuter - 2), cy + Math.sin(ang) * (rOuter - 2));
+                ctx.strokeStyle = isHour ? '#f3c653' : '#6b7280';
+                ctx.lineWidth = isHour ? 2 : 1;
+                ctx.stroke();
+
+                if (isHour) {
+                    const hr = i === 0 ? 12 : i / 5;
+                    ctx.fillStyle = '#f9fafb';
+                    ctx.font = 'bold 15px sans-serif';
+                    ctx.fillText(hr, cx + Math.cos(ang) * (rOuter - 26), cy + Math.sin(ang) * (rOuter - 26));
+                }
+            }
+
+            // Inner 5..60 Malayalam numerals
+            for (let n = 5; n <= 60; n += 5) {
+                const ang = (n / 60) * Math.PI * 2 - Math.PI / 2;
+                ctx.fillStyle = '#f3c653';
+                ctx.font = 'bold 11px sans-serif';
+                ctx.fillText(toMlNum(n), cx + Math.cos(ang) * (rInner - 14), cy + Math.sin(ang) * (rInner - 14));
+            }
+
+            // Modern hands
+            const sec = now.getSeconds() + now.getMilliseconds() / 1000;
+            const min = now.getMinutes() + sec / 60;
+            const hr = (now.getHours() % 12) + min / 60;
+            drawHand(ctx, cx, cy, (hr / 12) * Math.PI * 2, 72, 4.5, '#f3c653');
+            drawHand(ctx, cx, cy, (min / 60) * Math.PI * 2, 108, 3, '#fde68a');
+
+            // Nazhika & Vinazhika hands
+            const nAngle = ((nData.nazhika + nData.vinazhika / 60) / 60) * Math.PI * 2;
+            const vAngle = ((nData.vinazhika + nData.subVinazhika) / 60) * Math.PI * 2;
+            drawHand(ctx, cx, cy, nAngle, 62, 3.5, '#ef4444');
+            drawHand(ctx, cx, cy, vAngle, 86, 2, '#38bdf8');
+
+            // Center cap
+            ctx.beginPath();
+            ctx.arc(cx, cy, 5, 0, Math.PI * 2);
+            ctx.fillStyle = '#f3c653';
+            ctx.fill();
+        }
+
+        function drawToggleClock(now, nData) {
+            const canvas = document.getElementById('toggleCanvas');
+            const ctx = canvas.getContext('2d');
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+            const r = 104;
+            const isNazhika = document.getElementById('modeToggle').checked;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, Math.PI * 2);
+            ctx.fillStyle = '#070b14';
+            ctx.fill();
+            ctx.lineWidth = 3.5;
+            ctx.strokeStyle = '#f3c653';
+            ctx.stroke();
+
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            if (!isNazhika) {
+                for (let h = 1; h <= 12; h++) {
+                    const ang = (h / 12) * Math.PI * 2 - Math.PI / 2;
+                    ctx.fillStyle = '#f9fafb';
+                    ctx.font = 'bold 14px sans-serif';
+                    ctx.fillText(h, cx + Math.cos(ang) * (r - 20), cy + Math.sin(ang) * (r - 20));
+                }
+                const sec = now.getSeconds();
+                const min = now.getMinutes() + sec / 60;
+                const hr = (now.getHours() % 12) + min / 60;
+                drawHand(ctx, cx, cy, (hr / 12) * Math.PI * 2, 52, 4, '#f3c653');
+                drawHand(ctx, cx, cy, (min / 60) * Math.PI * 2, 74, 2.5, '#fde68a');
+                drawHand(ctx, cx, cy, (sec / 60) * Math.PI * 2, 82, 1.5, '#ef4444');
+            } else {
+                for (let n = 5; n <= 60; n += 5) {
+                    const ang = (n / 60) * Math.PI * 2 - Math.PI / 2;
+                    ctx.fillStyle = '#f3c653';
+                    ctx.font = 'bold 12px sans-serif';
+                    ctx.fillText(toMlNum(n), cx + Math.cos(ang) * (r - 20), cy + Math.sin(ang) * (r - 20));
+                }
+                const nAng = ((nData.nazhika + nData.vinazhika / 60) / 60) * Math.PI * 2;
+                const vAng = ((nData.vinazhika + nData.subVinazhika) / 60) * Math.PI * 2;
+                drawHand(ctx, cx, cy, nAng, 54, 4, '#ef4444');
+                drawHand(ctx, cx, cy, vAng, 78, 2.5, '#38bdf8');
+            }
+
+            ctx.beginPath();
+            ctx.arc(cx, cy, 4.5, 0, Math.PI * 2);
+            ctx.fillStyle = '#f3c653';
+            ctx.fill();
+        }
+
+        function onModeChange() {
+            const isNazhika = document.getElementById('modeToggle').checked;
+            document.getElementById('toggleStatusText').innerText = isNazhika ? 'നാഴിക സമയം' : 'സാധാരണ സമയം';
+            document.getElementById('lblModern').style.color = isNazhika ? '#9ca3af' : '#f3c653';
+            document.getElementById('lblNazhika').style.color = isNazhika ? '#f3c653' : '#9ca3af';
+        }
+
+        // Calculator 1A: Hours + Minutes + Seconds -> Nazhika + Vinazhika
+        function calcModernToNazhika() {
+            const h = parseFloat(document.getElementById('inHours').value) || 0;
+            const m = parseFloat(document.getElementById('inMinutes').value) || 0;
+            const s = parseFloat(document.getElementById('inSeconds').value) || 0;
+            const totalSeconds = h * 3600 + m * 60 + s;
+            const totalVinazhika = totalSeconds / 24;
+            const nazhika = Math.floor(totalVinazhika / 60);
+            const vinazhika = Math.round((totalVinazhika % 60) * 10) / 10;
+            document.getElementById('resModernToNazhika').innerText =
+                `${nazhika} നാഴിക ${vinazhika} വിനാഴിക (${toMlNum(nazhika)} നാഴിക ${toMlNum(vinazhika)} വിനാഴിക)`;
+        }
+
+        // Calculator 1B: Nazhika + Vinazhika -> Hours + Minutes + Seconds
+        function calcNazhikaToModern() {
+            const n = parseFloat(document.getElementById('inNazhika').value) || 0;
+            const v = parseFloat(document.getElementById('inVinazhika').value) || 0;
+            const totalSeconds = Math.round((n * 60 + v) * 24);
+            const hrs = Math.floor(totalSeconds / 3600);
+            const mins = Math.floor((totalSeconds % 3600) / 60);
+            const secs = totalSeconds % 60;
+            document.getElementById('resNazhikaToModern').innerText =
+                `${hrs} മണിക്കൂർ ${mins} മിനിറ്റ് ${secs} സെക്കൻഡ്`;
+        }
+
+        // Calculator 2: Clock Time (from 6:00 AM) -> Nazhika & Vinazhika
+        function calcClockTimeToNazhika() {
+            const val = document.getElementById('clockPicker').value;
+            if (!val) return;
+            const parts = val.split(':').map(Number);
+            const hh = parts[0] || 0;
+            const mm = parts[1] || 0;
+            const ss = parts[2] || 0;
+            const d = new Date();
+            d.setHours(hh, mm, ss, 0);
+            const nData = getNazhikaFromDate(d);
+            document.getElementById('resClockToNazhika').innerText =
+                `${nData.nazhika} നാഴിക ${nData.vinazhika} വിനാഴിക (${toMlNum(nData.nazhika)} നാഴിക ${toMlNum(nData.vinazhika)} വിനാഴിക)`;
+        }
+
+        function tick() {
+            const now = new Date();
+            const nData = getNazhikaFromDate(now);
+            drawDualClock(now, nData);
+            drawToggleClock(now, nData);
+
+            document.getElementById('nazhikaReadout').innerText =
+                `${toMlNum(nData.nazhika)} നാഴിക · ${toMlNum(nData.vinazhika)} വിനാഴിക`;
+
+            document.getElementById('modernReadout').innerText =
+                now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+            const mlDate = now.toLocaleDateString('ml-IN', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' });
+            const enDate = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+            document.getElementById('dateBanner').innerText = `${mlDate} · ${enDate}`;
+        }
+
+        calcModernToNazhika();
+        calcNazhikaToModern();
+        calcClockTimeToNazhika();
+        setInterval(tick, 250);
+        tick();
+    </script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+{
+  "name": "മലയാളം നാഴിക വാച്ച് & കാൽക്കുലേറ്റർ",
+  "short_name": "നാഴിക വാച്ച്",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b0f19",
+  "theme_color": "#f3c653",
+  "description": "പരമ്പരാഗത മലയാളം നാഴിക, വിനാഴിക സമയക്രമവും കാൽക്കുലേറ്ററും - കണ്ണൂർ ചെറുത് (Vishnuprasad A S)",
+  "icons": [
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
