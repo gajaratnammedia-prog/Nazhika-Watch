@@ -202,7 +202,7 @@
             font-size: 0.8rem;
             color: var(--muted-text);
         }
-        /* Calculator 1 */
+        /* Calculator */
         .grid-3 {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -263,6 +263,75 @@
             font-size: 0.86rem;
             color: #d1d5db;
             margin: -6px 0 12px 0;
+        }
+        /* Malayalam Alphabet & Numbers Grid */
+        .script-group-box {
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 12px 10px;
+            margin-bottom: 14px;
+        }
+        .script-group-title {
+            color: var(--accent-color);
+            font-size: 0.96rem;
+            font-weight: bold;
+            margin: 0 0 10px 0;
+            text-align: center;
+            border-bottom: 1px solid rgba(243, 198, 83, 0.25);
+            padding-bottom: 6px;
+        }
+        .letter-grid-5 {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+        .letter-btn {
+            height: 44px;
+            border-radius: 10px;
+            border: 1px solid rgba(243, 198, 83, 0.45);
+            background: rgba(255, 255, 255, 0.04);
+            color: #fff;
+            font-size: 1.15rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s, transform 0.1s;
+        }
+        .letter-btn:active {
+            transform: scale(0.95);
+            background: rgba(243, 198, 83, 0.22);
+        }
+        .letter-btn.archaic {
+            background: rgba(243, 198, 83, 0.12);
+        }
+        .num-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 7px;
+        }
+        .num-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(243, 198, 83, 0.35);
+            border-radius: 10px;
+            padding: 7px 4px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .num-card:active {
+            background: rgba(243, 198, 83, 0.2);
+        }
+        .num-ml {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            line-height: 1.25;
+        }
+        .num-en {
+            font-size: 0.72rem;
+            color: var(--muted-text);
+            margin-top: 2px;
         }
         footer.credit-card {
             text-align: center;
@@ -381,24 +450,51 @@
             </div>
         </section>
 
-        <!-- മലയാള കലണ്ടർ കാർഡ് -->
+        <!-- Section 5: മലയാള കലണ്ടർ -->
         <section class="card" id="malayalam-calendar-section">
             <h2 class="section-title">മലയാള കലണ്ടർ</h2>
             <div id="malayalam-date-output" style="font-size: 1.02rem; line-height: 1.7;"></div>
         </section>
 
-        <!-- മലയാള അക്ഷരമാല & പഴയ ലിപി കോളം -->
+        <!-- Section 6: മലയാള അക്ഷരമാല (മൂന്ന് വിഭാഗങ്ങളായി തിരിച്ചത്) -->
         <section class="card" id="malayalam-script-section">
             <h2 class="section-title">മലയാള അക്ഷരമാല</h2>
-            <p class="sub-desc" style="text-align: center; margin-top: -4px;">സ്വരങ്ങൾ, വ്യഞ്ജനങ്ങൾ, ചില്ലക്ഷരങ്ങൾ</p>
-            <div id="modern-malayalam-letters" style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 18px;"></div>
 
-            <h3 class="section-title" style="font-size: 1.02rem; margin-top: 12px;">പഴയ ലിപി & അപൂർവ്വ അക്ഷര കോളം</h3>
-            <p class="sub-desc" style="text-align: center; margin-top: -4px;">ചരിത്രപരമായ ലിപിരൂപങ്ങളും പഴയ പ്രയോഗങ്ങളും (ഫോണ്ട് പിന്തുണയ്ക്കനുസരിച്ച് മാറാം)</p>
-            <div id="archaic-malayalam-letters" style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;"></div>
-            <div id="letter-info-box" style="margin-top: 14px; padding: 10px 12px; border-radius: 10px; background: rgba(255,255,255,0.06); font-size: 0.92rem; min-height: 24px; text-align: center;">
+            <!-- 1. സ്വരാക്ഷരങ്ങൾ -->
+            <div class="script-group-box">
+                <h3 class="script-group-title">1. സ്വരാക്ഷരങ്ങൾ (Vowels)</h3>
+                <div id="vowels-container" class="letter-grid-5"></div>
+            </div>
+
+            <!-- 2. വ്യഞ്ജനാക്ഷരങ്ങൾ -->
+            <div class="script-group-box">
+                <h3 class="script-group-title">2. വ്യഞ്ജനാക്ഷരങ്ങൾ (Consonants)</h3>
+                <div id="consonants-container" class="letter-grid-5"></div>
+            </div>
+
+            <!-- 3. ചില്ലക്ഷരങ്ങൾ -->
+            <div class="script-group-box">
+                <h3 class="script-group-title">3. ചില്ലക്ഷരങ്ങൾ (Chillu Letters)</h3>
+                <div id="chillu-container" class="letter-grid-5"></div>
+            </div>
+
+            <!-- പഴയ ലിപി & അപൂർവ്വ അക്ഷര കോളം -->
+            <div class="script-group-box" style="margin-bottom: 0;">
+                <h3 class="script-group-title">പഴയ ലിപി & അപൂർവ്വ അക്ഷര കോളം</h3>
+                <p class="sub-desc" style="text-align: center; margin: 0 0 10px 0; font-size: 0.82rem;">ഇപ്പോൾ പ്രചാരത്തിലില്ലാത്ത പഴയ ലിപികളും അക്കചിഹ്നങ്ങളും</p>
+                <div id="archaic-malayalam-letters" class="letter-grid-5"></div>
+            </div>
+
+            <div id="letter-info-box" style="margin-top: 14px; padding: 10px 12px; border-radius: 10px; background: rgba(243, 198, 83, 0.1); border: 1px solid rgba(243, 198, 83, 0.35); color: var(--accent-color); font-size: 0.92rem; min-height: 24px; text-align: center;">
                 ഒരു അക്ഷരത്തിൽ തൊട്ട് വിവരങ്ങൾ കാണുക.
             </div>
+        </section>
+
+        <!-- Section 7: മലയാളം അക്കങ്ങൾ (1 മുതൽ 100 വരെ) -->
+        <section class="card" id="malayalam-numbers-section">
+            <h2 class="section-title">മലയാളം അക്കങ്ങൾ (൧ – ൧൦൦)</h2>
+            <p class="sub-desc" style="text-align: center; margin-top: -4px;">പരമ്പരാഗത മലയാള സംഖ്യകൾ 1 മുതൽ 100 വരെ</p>
+            <div id="malayalam-numbers-grid" class="num-grid"></div>
         </section>
 
         <!-- Footer Credit -->
@@ -641,7 +737,7 @@
             document.getElementById('dateBanner').innerText = `${mlDate} · ${enDate}`;
         }
 
-        // 1. അടിസ്ഥാന മലയാള കലണ്ടർ വിവരങ്ങൾ
+        // മലയാള കലണ്ടർ വിവരങ്ങൾ
         (function renderMalayalamCalendar() {
             const out = document.getElementById("malayalam-date-output");
             if (!out) return;
@@ -660,64 +756,100 @@
             out.innerHTML = `
                 <div><strong>ഇന്നത്തെ ദിവസം:</strong> ${weekdays[now.getDay()]} (${now.toLocaleDateString("ml-IN")})</div>
                 <div><strong>കൊല്ലവർഷം (ഏകദേശം):</strong> ${toMlNum(kollavarshamApprox)} (${kollavarshamApprox}) • <strong>മാസം:</strong> ${approxMonthName}</div>
-                <div style="font-size: 0.82rem; color: var(--muted-text); margin-top: 6px;">
-                    * സൂര്യസംക്രമം അടിസ്ഥാനമാക്കിയ കൃത്യമായ മലയാള തീയതിയും തിഥി/നക്ഷത്ര വിവരങ്ങളും ആവശ്യാനുസരണം ചേർക്കാം.
-                </div>
             `;
         })();
 
-        // 2. മലയാള അക്ഷരമാലയും പഴയ ലിപി/അപൂർവ്വ ചിഹ്നങ്ങളും
+        // മലയാള അക്ഷരമാല (സ്വരങ്ങൾ, വ്യഞ്ജനങ്ങൾ, ചില്ലക്ഷരങ്ങൾ, പഴയ അക്ഷരങ്ങൾ)
         (function renderMalayalamScripts() {
-            const modernContainer = document.getElementById("modern-malayalam-letters");
-            const archaicContainer = document.getElementById("archaic-malayalam-letters");
+            const vowelsBox = document.getElementById("vowels-container");
+            const consonantsBox = document.getElementById("consonants-container");
+            const chilluBox = document.getElementById("chillu-container");
+            const archaicBox = document.getElementById("archaic-malayalam-letters");
             const infoBox = document.getElementById("letter-info-box");
-            if (!modernContainer || !archaicContainer || !infoBox) return;
 
-            const modernLetters = [
-                "അ","ആ","ഇ","ഈ","ഉ","ഊ","ഋ","ൠ","എ","ഏ","ഐ","ഒ","ഓ","ഔ","അം","അഃ",
-                "ക","ഖ","ഗ","ഘ","ങ","ച","ഛ","ജ","ഝ","ഞ","ട","ഠ","ഡ","ഢ","ണ",
-                "ത","ഥ","ദ","ധ","ന","പ","ഫ","ബ","ഭ","മ","യ","ര","ല","വ","ശ","ഷ","സ","ഹ","ള","ഴ","റ","റ്റ",
-                "ൾ","ൽ","ൺ","ൻ","ർ"
+            // 1. ആധുനിക സ്വരാക്ഷരങ്ങൾ (ൠ ഒഴിവാക്കി ക്രമത്തിൽ)
+            const vowels = [
+                "അ", "ആ", "ഇ", "ഈ", "ഉ",
+                "ഊ", "ഋ", "എ", "ഏ", "ഐ",
+                "ഒ", "ഓ", "ഔ", "അം", "അഃ"
             ];
 
+            // 2. വ്യഞ്ജനാക്ഷരങ്ങൾ (ക മുതൽ റ്റ വരെ കൃത്യമായ അക്ഷരമാലാ ക്രമത്തിൽ)
+            const consonants = [
+                "ക", "ഖ", "ഗ", "ഘ", "ങ",
+                "ച", "ഛ", "ജ", "ഝ", "ഞ",
+                "ട", "ഠ", "ഡ", "ഢ", "ണ",
+                "ത", "ഥ", "ദ", "ധ", "ന",
+                "പ", "ഫ", "ബ", "ഭ", "മ",
+                "യ", "ര", "ല", "വ", "ശ",
+                "ഷ", "സ", "ഹ", "ള", "ഴ",
+                "റ", "റ്റ"
+            ];
+
+            // 3. ചില്ലക്ഷരങ്ങൾ
+            const chillus = ["ൺ", "ൻ", "ർ", "ൽ", "ൾ"];
+
+            // 4. ഇപ്പോൾ പ്രചാരത്തിലില്ലാത്ത പഴയ അക്ഷരങ്ങളും ചിഹ്നങ്ങളും (ൠ ഉൾപ്പെടെ)
             const archaicItems = [
-                { glyph: "ൟ", note: "പഴയ ദീർഘ ഇ-കാരം (Archaic long ii)" },
-                { glyph: "ൡ", note: "പഴയ ദീർഘ ൠ-കാരം (Archaic long vocalic ll)" },
-                { glyph: "൰", note: "പഴയ മലയാള അക്കം: 10 (Archaic number 10)" },
-                { glyph: "൱", note: "പഴയ മലയാള അക്കം: 100 (Archaic number 100)" },
-                { glyph: "൲", note: "പഴയ മലയാള അക്കം: 1000 (Archaic number 1000)" },
-                { glyph: "൳", note: "പഴയ ഭിന്നസംഖ്യാ ചിഹ്നം: 1/4 (Archaic fraction 1/4)" },
-                { glyph: "൴", note: "പഴയ ഭിന്നസംഖ്യാ ചിഹ്നം: 1/2 (Archaic fraction 1/2)" },
-                { glyph: "൵", note: "പഴയ ഭിന്നസംഖ്യാ ചിഹ്നം: 3/4 (Archaic fraction 3/4)" },
-                { glyph: "൸", note: "പഴയ മലയാള ഭിന്നസംഖ്യാ ചിഹ്നം (Archaic fraction mark)" },
-                { glyph: "ൿ", note: "പഴയ ചില്ലക്ഷര രൂപം (Archaic chillu k)" },
-                { glyph: "ൔ", note: "പഴയ ചില്ലക്ഷര രൂപം (Archaic chillu m)" },
-                { glyph: "ൕ", note: "പഴയ ചില്ലക്ഷര രൂപം (Archaic chillu y)" }
+                { glyph: "ൠ", note: "ൠ — പഴയ സ്വരാക്ഷരം (ദീർഘ ഋ - ഇപ്പോൾ പ്രചാരത്തിലില്ല)" },
+                { glyph: "ഌ", note: "ഌ — പഴയ സ്വരാക്ഷരം (ഹ്രസ്വ ഌ - ഇപ്പോൾ പ്രചാരത്തിലില്ല)" },
+                { glyph: "ൡ", note: "ൡ — പഴയ സ്വരാക്ഷരം (ദീർഘ ൡ - ഇപ്പോൾ പ്രചാരത്തിലില്ല)" },
+                { glyph: "ൟ", note: "ൟ — പഴയ ദീർഘ ഇ-കാരം (ഈ എന്നതിന് പകരം പണ്ട് ഉപയോഗിച്ചിരുന്നത്)" },
+                { glyph: "ൿ", note: "ൿ — പഴയ ചില്ലക്ഷരം (ചില്ല് 'ക്')" },
+                { glyph: "ൔ", note: "ൔ — പഴയ ചില്ലക്ഷരം (ചില്ല് 'മ്')" },
+                { glyph: "ൕ", note: "ൕ — പഴയ ചില്ലക്ഷരം (ചില്ല് 'യ്')" },
+                { glyph: "ൖ", note: "ൖ — പഴയ ചില്ലക്ഷരം (ചില്ല് 'ഴ്')" },
+                { glyph: "൰", note: "൰ — പഴയ മലയാള സംഖ്യാ ചിഹ്നം: 10" },
+                { glyph: "൱", note: "൱ — പഴയ മലയാള സംഖ്യാ ചിഹ്നം: 100" },
+                { glyph: "൲", note: "൲ — പഴയ മലയാള സംഖ്യാ ചിഹ്നം: 1000" },
+                { glyph: "൳", note: "൳ — പഴയ ഭിന്നസംഖ്യാ ചിഹ്നം: 1/4 (കാൽ)" },
+                { glyph: "൴", note: "൴ — പഴയ ഭിന്നസംഖ്യാ ചിഹ്നം: 1/2 (അര)" },
+                { glyph: "൵", note: "൵ — പഴയ ഭിന്നസംഖ്യാ ചിഹ്നം: 3/4 (മുക്കാൽ)" },
+                { glyph: "൸", note: "൸ — പഴയ ഭിന്നസംഖ്യാ ചിഹ്നം: 3/16 (മൂന്ന് വീശം)" }
             ];
 
             function makeButton(label, description, isArchaic) {
                 const btn = document.createElement("button");
                 btn.type = "button";
+                btn.className = isArchaic ? "letter-btn archaic" : "letter-btn";
                 btn.textContent = label;
-                btn.style.cssText = `
-                    min-width: 44px; height: 44px; padding: 0 8px;
-                    border-radius: 10px; border: 1px solid rgba(243,198,83,0.45);
-                    background: ${isArchaic ? "rgba(243,198,83,0.12)" : "rgba(255,255,255,0.05)"};
-                    color: #fff; font-size: 1.15rem; cursor: pointer;
-                `;
                 btn.addEventListener("click", () => {
-                    infoBox.textContent = `${label} — ${description}`;
+                    infoBox.textContent = description;
                 });
                 return btn;
             }
 
-            modernLetters.forEach((ch) => {
-                modernContainer.appendChild(makeButton(ch, "ആധുനിക മലയാള അക്ഷരമാലയിലെ അക്ഷരം", false));
+            vowels.forEach((ch) => {
+                vowelsBox.appendChild(makeButton(ch, `${ch} — സ്വരാക്ഷരം`, false));
+            });
+
+            consonants.forEach((ch) => {
+                consonantsBox.appendChild(makeButton(ch, `${ch} — വ്യഞ്ജനാക്ഷരം`, false));
+            });
+
+            chillus.forEach((ch) => {
+                chilluBox.appendChild(makeButton(ch, `${ch} — ചില്ലക്ഷരം`, false));
             });
 
             archaicItems.forEach((item) => {
-                archaicContainer.appendChild(makeButton(item.glyph, item.note, true));
+                archaicBox.appendChild(makeButton(item.glyph, item.note, true));
             });
+        })();
+
+        // മലയാളം അക്കങ്ങൾ 1 മുതൽ 100 വരെ
+        (function renderMalayalamNumbers() {
+            const grid = document.getElementById("malayalam-numbers-grid");
+            if (!grid) return;
+
+            for (let i = 1; i <= 100; i++) {
+                const card = document.createElement("div");
+                card.className = "num-card";
+                card.innerHTML = `
+                    <div class="num-ml">${toMlNum(i)}</div>
+                    <div class="num-en">${i}</div>
+                `;
+                grid.appendChild(card);
+            }
         })();
 
         calcModernToNazhika();
