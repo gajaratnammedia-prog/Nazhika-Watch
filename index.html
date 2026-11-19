@@ -381,6 +381,26 @@
             </div>
         </section>
 
+        <!-- മലയാള കലണ്ടർ കാർഡ് -->
+        <section class="card" id="malayalam-calendar-section">
+            <h2 class="section-title">മലയാള കലണ്ടർ</h2>
+            <div id="malayalam-date-output" style="font-size: 1.02rem; line-height: 1.7;"></div>
+        </section>
+
+        <!-- മലയാള അക്ഷരമാല & പഴയ ലിപി കോളം -->
+        <section class="card" id="malayalam-script-section">
+            <h2 class="section-title">മലയാള അക്ഷരമാല</h2>
+            <p class="sub-desc" style="text-align: center; margin-top: -4px;">സ്വരങ്ങൾ, വ്യഞ്ജനങ്ങൾ, ചില്ലക്ഷരങ്ങൾ</p>
+            <div id="modern-malayalam-letters" style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 18px;"></div>
+
+            <h3 class="section-title" style="font-size: 1.02rem; margin-top: 12px;">പഴയ ലിപി & അപൂർവ്വ അക്ഷര കോളം</h3>
+            <p class="sub-desc" style="text-align: center; margin-top: -4px;">ചരിത്രപരമായ ലിപിരൂപങ്ങളും പഴയ പ്രയോഗങ്ങളും (ഫോണ്ട് പിന്തുണയ്ക്കനുസരിച്ച് മാറാം)</p>
+            <div id="archaic-malayalam-letters" style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;"></div>
+            <div id="letter-info-box" style="margin-top: 14px; padding: 10px 12px; border-radius: 10px; background: rgba(255,255,255,0.06); font-size: 0.92rem; min-height: 24px; text-align: center;">
+                ഒരു അക്ഷരത്തിൽ തൊട്ട് വിവരങ്ങൾ കാണുക.
+            </div>
+        </section>
+
         <!-- Footer Credit -->
         <footer class="credit-card">
             <div class="small-label">Developed by</div>
@@ -621,112 +641,90 @@
             document.getElementById('dateBanner').innerText = `${mlDate} · ${enDate}`;
         }
 
+        // 1. അടിസ്ഥാന മലയാള കലണ്ടർ വിവരങ്ങൾ
+        (function renderMalayalamCalendar() {
+            const out = document.getElementById("malayalam-date-output");
+            if (!out) return;
+
+            const now = new Date();
+            const weekdays = ["ഞായർ", "തിങ്കൾ", "ചൊവ്വ", "ബുധൻ", "വ്യാഴം", "വെള്ളി", "ശനി"];
+            const months = [
+                "ചിങ്ങം", "കന്നി", "തുലാം", "വൃശ്ചികം", "ധനു", "മകരം",
+                "കുംഭം", "മീനം", "മേടം", "ഇടവം", "മിഥുനം", "കർക്കടകം"
+            ];
+
+            const gregorianYear = now.getFullYear();
+            const kollavarshamApprox = now.getMonth() >= 7 ? gregorianYear - 825 : gregorianYear - 826;
+            const approxMonthName = months[(now.getMonth() + 4) % 12];
+
+            out.innerHTML = `
+                <div><strong>ഇന്നത്തെ ദിവസം:</strong> ${weekdays[now.getDay()]} (${now.toLocaleDateString("ml-IN")})</div>
+                <div><strong>കൊല്ലവർഷം (ഏകദേശം):</strong> ${toMlNum(kollavarshamApprox)} (${kollavarshamApprox}) • <strong>മാസം:</strong> ${approxMonthName}</div>
+                <div style="font-size: 0.82rem; color: var(--muted-text); margin-top: 6px;">
+                    * സൂര്യസംക്രമം അടിസ്ഥാനമാക്കിയ കൃത്യമായ മലയാള തീയതിയും തിഥി/നക്ഷത്ര വിവരങ്ങളും ആവശ്യാനുസരണം ചേർക്കാം.
+                </div>
+            `;
+        })();
+
+        // 2. മലയാള അക്ഷരമാലയും പഴയ ലിപി/അപൂർവ്വ ചിഹ്നങ്ങളും
+        (function renderMalayalamScripts() {
+            const modernContainer = document.getElementById("modern-malayalam-letters");
+            const archaicContainer = document.getElementById("archaic-malayalam-letters");
+            const infoBox = document.getElementById("letter-info-box");
+            if (!modernContainer || !archaicContainer || !infoBox) return;
+
+            const modernLetters = [
+                "അ","ആ","ഇ","ഈ","ഉ","ഊ","ഋ","ൠ","എ","ഏ","ഐ","ഒ","ഓ","ഔ","അം","അഃ",
+                "ക","ഖ","ഗ","ഘ","ങ","ച","ഛ","ജ","ഝ","ഞ","ട","ഠ","ഡ","ഢ","ണ",
+                "ത","ഥ","ദ","ധ","ന","പ","ഫ","ബ","ഭ","മ","യ","ര","ല","വ","ശ","ഷ","സ","ഹ","ള","ഴ","റ","റ്റ",
+                "ൾ","ൽ","ൺ","ൻ","ർ"
+            ];
+
+            const archaicItems = [
+                { glyph: "ൟ", note: "പഴയ ദീർഘ ഇ-കാരം (Archaic long ii)" },
+                { glyph: "ൡ", note: "പഴയ ദീർഘ ൠ-കാരം (Archaic long vocalic ll)" },
+                { glyph: "൰", note: "പഴയ മലയാള അക്കം: 10 (Archaic number 10)" },
+                { glyph: "൱", note: "പഴയ മലയാള അക്കം: 100 (Archaic number 100)" },
+                { glyph: "൲", note: "പഴയ മലയാള അക്കം: 1000 (Archaic number 1000)" },
+                { glyph: "൳", note: "പഴയ ഭിന്നസംഖ്യാ ചിഹ്നം: 1/4 (Archaic fraction 1/4)" },
+                { glyph: "൴", note: "പഴയ ഭിന്നസംഖ്യാ ചിഹ്നം: 1/2 (Archaic fraction 1/2)" },
+                { glyph: "൵", note: "പഴയ ഭിന്നസംഖ്യാ ചിഹ്നം: 3/4 (Archaic fraction 3/4)" },
+                { glyph: "൸", note: "പഴയ മലയാള ഭിന്നസംഖ്യാ ചിഹ്നം (Archaic fraction mark)" },
+                { glyph: "ൿ", note: "പഴയ ചില്ലക്ഷര രൂപം (Archaic chillu k)" },
+                { glyph: "ൔ", note: "പഴയ ചില്ലക്ഷര രൂപം (Archaic chillu m)" },
+                { glyph: "ൕ", note: "പഴയ ചില്ലക്ഷര രൂപം (Archaic chillu y)" }
+            ];
+
+            function makeButton(label, description, isArchaic) {
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.textContent = label;
+                btn.style.cssText = `
+                    min-width: 44px; height: 44px; padding: 0 8px;
+                    border-radius: 10px; border: 1px solid rgba(243,198,83,0.45);
+                    background: ${isArchaic ? "rgba(243,198,83,0.12)" : "rgba(255,255,255,0.05)"};
+                    color: #fff; font-size: 1.15rem; cursor: pointer;
+                `;
+                btn.addEventListener("click", () => {
+                    infoBox.textContent = `${label} — ${description}`;
+                });
+                return btn;
+            }
+
+            modernLetters.forEach((ch) => {
+                modernContainer.appendChild(makeButton(ch, "ആധുനിക മലയാള അക്ഷരമാലയിലെ അക്ഷരം", false));
+            });
+
+            archaicItems.forEach((item) => {
+                archaicContainer.appendChild(makeButton(item.glyph, item.note, true));
+            });
+        })();
+
         calcModernToNazhika();
         calcNazhikaToModern();
         calcClockTimeToNazhika();
         setInterval(tick, 250);
         tick();
-   <!-- മലയാള കലണ്ടർ കാർഡ് -->
-<section class="card" id="malayalam-calendar-section" style="margin-top: 20px; padding: 18px; border-radius: 16px; border: 1px solid rgba(212,175,55,0.35); background: rgba(15,20,35,0.85); color: #f5f5f5;">
-  <h2 style="margin-top: 0; color: #e5c158;">മലയാള കലണ്ടർ</h2>
-  <div id="malayalam-date-output" style="font-size: 1.05rem; line-height: 1.7;"></div>
-</section>
-
-<!-- മലയാള അക്ഷരമാല & പഴയ ലിപി കോളം -->
-<section class="card" id="malayalam-script-section" style="margin-top: 20px; padding: 18px; border-radius: 16px; border: 1px solid rgba(212,175,55,0.35); background: rgba(15,20,35,0.85); color: #f5f5f5;">
-  <h2 style="margin-top: 0; color: #e5c158;">മലയാള അക്ഷരമാല</h2>
-  <p style="font-size: 0.9rem; opacity: 0.85;">സ്വരങ്ങൾ, വ്യഞ്ജനങ്ങൾ, ചില്ലക്ഷരങ്ങൾ</p>
-  <div id="modern-malayalam-letters" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px;"></div>
-
-  <h3 style="margin-top: 12px; color: #e5c158;">പഴയ ലിപി & അപൂർവ്വ അക്ഷര കോളം</h3>
-  <p style="font-size: 0.88rem; opacity: 0.85;">ചരിത്രപരമായ ലിപിരൂപങ്ങളും പഴയ പ്രയോഗങ്ങളും (ഫോണ്ട് പിന്തുണയ്ക്കനുസരിച്ച് മാറാം)</p>
-  <div id="archaic-malayalam-letters" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
-  <div id="letter-info-box" style="margin-top: 14px; padding: 10px 12px; border-radius: 10px; background: rgba(255,255,255,0.06); font-size: 0.92rem; min-height: 24px;">
-    ഒരു അക്ഷരത്തിൽ തൊട്ട് വിവരങ്ങൾ കാണുക.
-  </div>
-</section>
-
-<script>
-  // 1. അടിസ്ഥാന മലയാള കലണ്ടർ വിവരങ്ങൾ (കൃത്യമായ പഞ്ചാംഗ/സൂര്യസിദ്ധാന്ത കണക്കുകൾക്ക് അനുസരിച്ച് ക്രമീകരിക്കാം)
-  (function renderMalayalamCalendar() {
-    const out = document.getElementById("malayalam-date-output");
-    if (!out) return;
-
-    const now = new Date();
-    const weekdays = ["ഞായർ", "തിങ്കൾ", "ചൊവ്വ", "ബുധൻ", "വ്യാഴം", "വെള്ളി", "ശനി"];
-    const months = [
-      "ചിങ്ങം", "കന്നി", "തുലാം", "വൃശ്ചികം", "ധനു", "മകരം",
-      "കുംഭം", "മീനം", "മേടം", "ഇടവം", "മിഥുനം", "കർക്കടകം"
-    ];
-
-    // ഏകദേശ കൊല്ലവർഷ കണക്ക് (ചിങ്ങം മുതൽ ഓഗസ്റ്റ്/സെപ്റ്റംബർ വരെ മാറുന്ന രീതിക്കനുസരിച്ച് സൂക്ഷ്മമായി ക്രമീകരിക്കുക)
-    const gregorianYear = now.getFullYear();
-    const kollavarshamApprox = now.getMonth() >= 7 ? gregorianYear - 825 : gregorianYear - 826;
-    const approxMonthName = months[(now.getMonth() + 4) % 12];
-
-    out.innerHTML = `
-      <div><strong>ഇന്നത്തെ ദിവസം:</strong> ${weekdays[now.getDay()]} (${now.toLocaleDateString("ml-IN")})</div>
-      <div><strong>കൊല്ലവർഷം (ഏകദേശം):</strong> ${kollavarshamApprox} • <strong>മാസം:</strong> ${approxMonthName}</div>
-      <div style="font-size: 0.85rem; opacity: 0.8; margin-top: 6px;">
-        * സൂര്യസംക്രമം അടിസ്ഥാനമാക്കിയ കൃത്യമായ മലയാള തീയതിയും തിഥി/നക്ഷത്ര വിവരങ്ങളും നിങ്ങളുടെ കലണ്ടർ ലോജിക് അനുസരിച്ച് ഇവിടെ ചേർക്കാം.
-      </div>
-    `;
-  })();
-
-  // 2. മലയാള അക്ഷരമാലയും പഴയ ലിപി/അപൂർവ്വ ചിഹ്നങ്ങളും
-  (function renderMalayalamScripts() {
-    const modernContainer = document.getElementById("modern-malayalam-letters");
-    const archaicContainer = document.getElementById("archaic-malayalam-letters");
-    const infoBox = document.getElementById("letter-info-box");
-    if (!modernContainer || !archaicContainer || !infoBox) return;
-
-    const modernLetters = [
-      "അ","ആ","ഇ","ഈ","ഉ","ഊ","ഋ","ൠ","എ","ഏ","ഐ","ഒ","ഓ","ഔ","അം","അഃ",
-      "ക","ഖ","ഗ","ഘ","ങ","ച","ഛ","ജ","ഝ","ഞ","ട","ഠ","ഡ","ഢ","ണ",
-      "ത","ഥ","ദ","ധ","ന","പ","ഫ","ബ","ഭ","മ","യ","ര","ല","വ","ശ","ഷ","സ","ഹ","ള","ഴ","റ","റ്റ",
-      "ൾ","ൽ","ൺ","ൻ","ർ"
-    ];
-
-    // ചരിത്രപരമായ ലിപിരൂപങ്ങൾ / പഴയ പ്രയോഗങ്ങൾ (ചില ഗ്ലിഫുകൾ ഉപകരണത്തിലെ ഫോണ്ടിനെ ആശ്രയിക്കും)
-    const archaicItems = [
-      { glyph: "ൟ", note: "പഴയ ദീർഘ ഇ-കാരം (Archaic long ii)" },
-      { glyph: "ൡ", note: "പഴയ ദീർഘ ൠ-കാരം (Archaic long vocalic ll)" },
-      { glyph: "൰", note: "പഴയ മലയാള അക്കം: 10 (Archaic number 10)" },
-      { glyph: "൱", note: "പഴയ മലയാള അക്കം: 100 (Archaic number 100)" },
-      { glyph: "൲", note: "പഴയ മലയാള അക്കം: 1000 (Archaic number 1000)" },
-      { glyph: "൳", note: "പഴയ ഭിന്നസംഖ്യാ ചിഹ്നം: 1/4 (Archaic fraction 1/4)" },
-      { glyph: "൴", note: "പഴയ ഭിന്നസംഖ്യാ ചിഹ്നം: 1/2 (Archaic fraction 1/2)" },
-      { glyph: "൵", note: "പഴയ ഭിന്നസംഖ്യാ ചിഹ്നം: 3/4 (Archaic fraction 3/4)" },
-      { glyph: "൸", note: "പഴയ മലയാള ഭിന്നസംഖ്യാ ചിഹ്നം (Archaic fraction mark)" },
-      { glyph: "ൿ", note: "പഴയ ചില്ലക്ഷര രൂപം (Archaic chillu k)" },
-      { glyph: "ൔ", note: "പഴയ ചില്ലക്ഷര രൂപം (Archaic chillu m)" },
-      { glyph: "ൕ", note: "പഴയ ചില്ലക്ഷര രൂപം (Archaic chillu y)" }
-    ];
-
-    function makeButton(label, description, isArchaic) {
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.textContent = label;
-      btn.style.cssText = `
-        min-width: 44px; height: 44px; padding: 0 8px;
-        border-radius: 10px; border: 1px solid rgba(229,193,88,0.45);
-        background: ${isArchaic ? "rgba(229,193,88,0.12)" : "rgba(255,255,255,0.05)"};
-        color: #fff; font-size: 1.15rem; cursor: pointer;
-      `;
-      btn.addEventListener("click", () => {
-        infoBox.textContent = `${label} — ${description}`;
-      });
-      return btn;
-    }
-
-    modernLetters.forEach((ch) => {
-      modernContainer.appendChild(makeButton(ch, "ആധുനിക മലയാള അക്ഷരമാലയിലെ അക്ഷരം", false));
-    });
-
-    archaicItems.forEach((item) => {
-      archaicContainer.appendChild(makeButton(item.glyph, item.note, true));
-    });
-  })();
     </script>
 </body>
 </html>
