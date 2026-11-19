@@ -3,9 +3,9 @@
     "relation": ["delegate_permission/common.handle_all_urls"],
     "target": {
       "namespace": "android_app",
-      "package_name": "io.github.gajaratnammediaprog.twa",
+      "package_name": "io.github.gajaratnammedia_prog.twa",
       "sha256_cert_fingerprints": [
-        "YOUR_SHA256_FINGERPRINT_HERE"
+        "42:32:43:39:A6:75:5B:4C:36:5F:D7:50:15:E3:2C:B4:78:9E:BF:5B:B2:73:27:CE:A6:E2:BB:84:B1:9E:0D:5F"
       ]
     }
   }
